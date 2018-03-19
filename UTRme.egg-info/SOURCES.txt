@@ -1,0 +1,14 @@
+MANIFEST.in
+README.rst
+setup.cfg
+setup.py
+UTRme/__init__.py
+UTRme/__main__.py
+UTRme/utrme.py
+UTRme.egg-info/PKG-INFO
+UTRme.egg-info/SOURCES.txt
+UTRme.egg-info/dependency_links.txt
+UTRme.egg-info/entry_points.txt
+UTRme.egg-info/not-zip-safe
+UTRme.egg-info/requires.txt
+UTRme.egg-info/top_level.txt

@@ -1,0 +1,20 @@
+Metadata-Version: 1.1
+Name: UTRme
+Version: 0.0.3
+Summary: UTRme
+Home-page: UNKNOWN
+Author: Santiago Radío
+Author-email: sradio91@gmail.com
+License: MIT
+Description-Content-Type: UNKNOWN
+Description: UTRme: a scoring based tool to annotate UTR regions in trypanosomatid genomes
+Keywords: utrme,splice-leader,polyA,UTR,trans-splicing
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Environment :: Console
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: Unix
+Classifier: Natural Language :: English
+Classifier: Programming Language :: Python :: 3
+Classifier: Topic :: Scientific/Engineering :: Bio-Informatics
