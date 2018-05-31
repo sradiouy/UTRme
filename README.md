@@ -3,10 +3,15 @@
 
 ## Installation
 
-conda config --add channels defaults \n
-conda config --add channels conda-forge \n
-conda config --add channels bioconda \n
-conda install -c sradiouy utrme \n
+$ conda config --add channels defaults
+
+$ conda config --add channels conda-forge
+
+$ conda config --add channels bioconda
+
+$ conda install -c sradiouy utrme
+
+
 
 ## UTRme: a scoring based tool to annotate UTR regions in trypanosomatid genomes 
 
