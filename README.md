@@ -43,30 +43,29 @@ UTRme needs a reference genome (sequence and annotation) (which can be obtained 
 
 
 * Genome
- * *Reference genome in fasta format.* 
-  * *Can be obtained from  [tritrypdb!](http://tritrypdb.org/)*
+  * *Reference genome in fasta format.* 
+    * *Can be obtained from  [tritrypdb!](http://tritrypdb.org/)*
    
 
 
 * Annotation
- * *Annotation of the genome in gff/gff3 format.*
-  * *Can be obtained from  [tritrypdb!](http://tritrypdb.org/)*
+  * *Annotation of the genome in gff/gff3 format.*
+    * *Can be obtained from  [tritrypdb!](http://tritrypdb.org/)*
   
 
 * Organism
- * *Define the spliced-ledear sequence used in the program.*
-  * *T. cruzi*
-  * *T. brucei* 
-  * *L. major*
+  * *Define the spliced-ledear sequence used in the program.*
+    * *T. cruzi*
+    * *T. brucei* 
+    * *L. major*
   
-
- * Type of experiment
+* Type of experiment
   * *Single-end*
   * *Paired*
   
  
 * Basename
- * *Basename of the output files.*
+  * *Basename of the output files.*
  
 
 The program starts with the removal of adapter sequences and trimming of low-quality ends from reads using cutadapt. By default, UTRme trims the Illumina TrueSeq adapter, but any sequence can be specified by the user. After that, cutadapt is used to identify the reads containing putative poly(A)  (PA) tails or spliced-leader (SL) sequences (secondary regions), allowing for mismatches. By default, we use an error probability 0.01 for poly(A) sequences (adjustable by the user) and one mismatch for SL sequences. In addition, the user can specify the minimum length of the identified secondary region. In order to correctly identify the trans-splicing sites, the user must also select the organism. Currently, Leishmania major, Trypanosoma brucei and Trypanosoma cruzi are available, however the number of available species can easily grow by including more species specific spliced-leader sequences. 
