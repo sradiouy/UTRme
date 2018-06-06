@@ -3,7 +3,7 @@
 
 ## How to install UTRme?
 
-**If you do not have [conda/miniconda] (https://conda.io/miniconda.html) installed, first you must first install it**
+**If you do not have [conda/miniconda](https://conda.io/miniconda.html) installed, first you must first install it**
 
  1. wget [https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh](https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh)
 
