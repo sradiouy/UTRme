@@ -23,7 +23,7 @@ If you do not have conda/miniconda installed, first you must first install it:
 
 1. $ conda install -c sradiouy utrme
 
-**If the previous step does not work, you must first configure the conda channels, and then isntall utrme, as in the instructions above.**
+**If the previous step does not work, you must first configure the conda channels, and then install utrme, as in the instructions above.**
 
 ## UTRme: a scoring based tool to annotate UTR regions in trypanosomatid genomes 
 
