@@ -1,6 +1,25 @@
-# UTRme: a scoring based tool to annotate UTR regions in trypanosomatid genomes 
+# UTRme: scoring-based annotation of UTR regions in trypanosomatid genomes
 
-*The trypanosomatid linage includes a variety of parasitic protozoans causing a significant worldwide problem burden on human health. Given their peculiar mechanisms of gene expression, these organisms depend on post-transcriptional regulation as the main level of gene expression control. Most signals involved in these regulatory networks are located in the untranslated regions (UTRs) of the mRNAs. To deepen our understanding of gene expression regulation we need to identify these regions with high accuracy. Therefore, we have created UTRme (UTR-mini-exon), a GUI stand-alone application to identify and annotate 5’ and 3’ UTR regions. UTRme implements a multiple scoring system to address the issue of false positive UTR assignment that frequently arise because of the characteristics of the available genomes. The tool offers a way for nonbioinformaticians to precisely determine UTRs from transcriptomic data.*
+**Motivation**:
+*Most  signals  involved  in  post-transcriptional  regulatory  networks  are 
+located in the untranslated regions (UTRs) of the mRNAs. Therefore, to deepen our 
+understanding of gene expression regulation, delimitation of these regions with high 
+accuracy  is  needed.  The  trypanosomatid  lineage  includes  a  variety  of  parasitic 
+protozoans  causing  a  significant  worldwide  burden  on  human  health.  Given  their 
+peculiar  mechanisms  of  gene  expression,  these  organisms  depend  on  post-
+transcriptional regulation as the main level of gene expression control. In this context, 
+the definition of the UTR regions becomes of key importance.* 
+
+**Results:**
+  *We  have  developed  UTRme  (UTR-mini-exon),  a  GUI  (graphical  user 
+interface)  stand-alone  application  to  identify  and  annotate  5’  and  3’  UTR  regions. 
+UTRme implements a multiple scoring system tailored to address the issue of false 
+positive UTR assignment that frequently arise because of the characteristics of the 
+intergenic regions. Even though it was developed for trypanosomatids, the tool can be 
+used to predict 3’ sites in any eukaryote and it is easily expanded to predict 5’ UTRs in 
+any organism where trans-splicing occurs (such as the model organism 
+C.  elegans). UTRme  offers  a  way  for  non-bioinformaticians  to  precisely  determine  UTRs  from 
+transcriptomic data.*
 
 ## How to install UTRme?
 
