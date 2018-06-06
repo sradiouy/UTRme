@@ -188,5 +188,5 @@ UTRme needs a reference genome (sequence and annotation) (which can be obtained 
 * **Through the issue section on the UTRme github page**
 * **To my personal email: sradio91@gmail.com**
 
-### We hope that UTRme will be useful for your research! 
+**We hope that UTRme will be useful for your research!** :v::v::v::v:
 
