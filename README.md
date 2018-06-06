@@ -45,12 +45,9 @@ transcriptomic data.*
 
 **If the previous step does not work, you must first configure the conda channels, and then install utrme, as in the instructions above.**
 
-## How to use UTRme?
-
-The software was written in python (version 3) and depends on cutadapt, bedtools, bowtie2, samtools and several python modules which are automatically configured during installation. 
+## How to configure UTRme?
 
 UTRme needs a reference genome (sequence and annotation) (which can be obtained from http://tritrypdb.org/) and raw reads from a RNA-seq experiment. UTRme can use RNA-seq data either sinlge-end or paired-end. 
-
 
 ### Required arguments:
 
@@ -182,3 +179,14 @@ UTRme needs a reference genome (sequence and annotation) (which can be obtained 
 * Excel
   * *Report results as excel files instead of tabular ones.*
   
+## How to run UTRme?
+
+**You only need to click on the start button!**
+
+## How to contact us?
+
+* **Through the issue section on the UTRme github page**
+* **To my personal email: sradio91@gmail.com**
+
+# We hope that UTRme will be useful for your research! 
+
