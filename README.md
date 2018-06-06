@@ -24,8 +24,6 @@ The software was written in python (version 3) and depends on cutadapt, bedtools
 
 ![UTRME1](https://github.com/sradiouy/UTRme/blob/master/utrme1.png)
 
-![UTRME2](https://github.com/sradiouy/UTRme/blob/master/utrme1.png)
-
 
 UTRme needs a reference genome (sequence and annotation) (which can be obtained from http://tritrypdb.org/) and raw reads from a RNA-seq experiment. UTRme can use RNA-seq data either sinlge-end or paired-end. The program starts with the removal of adapter sequences and trimming of low-quality ends from reads using cutadapt. By default, UTRme trims the Illumina TrueSeq adapter, but any sequence can be specified by the user. After that, cutadapt is used to identify the reads containing putative poly(A)  (PA) tails or spliced-leader (SL) sequences (secondary regions), allowing for mismatches. By default, we use an error probability 0.01 for poly(A) sequences (adjustable by the user) and one mismatch for SL sequences. In addition, the user can specify the minimum length of the identified secondary region. In order to correctly identify the trans-splicing sites, the user must also select the organism. Currently, Leishmania major, Trypanosoma brucei and Trypanosoma cruzi are available, however the number of available species can easily grow by including more species specific spliced-leader sequences. 
 
