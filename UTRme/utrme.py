@@ -34,10 +34,15 @@ from scipy import stats
 import scipy
 from matplotlib import rcParams
 import gc
+warnings.filterwarnings("ignore")
 
-
-
-@Gooey(optional_cols=2, program_name="UTRme",default_size=(810, 630))
+@Gooey(advanced=True,
+    optional_cols=2,
+    program_name="UTRme",
+    tabbed_groups=True,
+    dump_build_config=True,
+    show_success_modal=False,
+    default_size=(1024, 768))
 
 def parse_args():
     """ Use GooeyParser to build up the arguments we will use in UTRme
@@ -53,66 +58,54 @@ def parse_args():
         with open(args_file) as data_file:
             stored_args = json.load(data_file)
     parser = GooeyParser(description='UTRme: a scoring based tool to annotate UTR regions in trypanosomatid genomes\n\n')
-    parser.add_argument('-FASTQ1',
-                        required=True,
+    parser.add_argument('FASTQ1',
                         metavar='FASTQ files location',
                         action='store',
                         widget='DirChooser',
                         default=stored_args.get('FASTQ1'),
                         help="Pair 1 (or Single-End)")
-    parser.add_argument('-FASTQ2',
-                        required=True,
+    parser.add_argument('FASTQ2',
                         metavar='FASTQ files location',
                         action='store',
                         widget='DirChooser',
                         default=stored_args.get('FASTQ2'),
                         help=" Pair 2 (or repeat Single-End location)")
-    parser.add_argument('-Genome',
-                        required=True,
+    parser.add_argument('Genome',
                         metavar='Genome',
                         action='store',
                         widget='FileChooser',
                         default=stored_args.get('Genome'),
                         help='Fasta format.')
-    parser.add_argument('-Annotation',
-                        required=True,
+    parser.add_argument('Annotation',
                         metavar="Annotation",
                         action='store',
                         widget='FileChooser',
                         default=stored_args.get('Annotation'),
                         help='GFF format.')
-    parser.add_argument('-Basename',
-                        required=True,
-                        metavar = "Basename",
-                        action='store',
-                        default='Example',
-                        help='For output files.')
-    parser.add_argument('-i',"--identificator",
-                        metavar="id attribute",
-                        action='store',
-                        help='GFF attribute to be used as feature ID. i.e. ID=TcCLB.506779.120',
-                        default="ID=")
-    parser.add_argument('-Species',
-                        required=True,
+    parser.add_argument('Species',
                         metavar="Organisim",
                         help="For SL search",
                         action='store',
                         choices=['T. cruzi','T. brucei','L. major'],
                         default = "T. cruzi",
                         widget="Dropdown")
-    parser.add_argument("-r", "--rmtemp",
-                        metavar = "Remove temp folder",
-                        default=False,
-                        action="store_true")
-    parser.add_argument('-a','--adapter',
-                        metavar = "Adapter",
+    parser.add_argument("experiment",
+                        metavar="Type of experiment",
+                        choices=["Single","Paired"],
+                        widget="Dropdown",
+                        help="Single or Paired-End",
                         action='store',
-                        default='AGATCGGAAGAGC',
-                        help='Adapter sequences to filter out. If none leave empty.')
-    parser.add_argument("-x", "--excel",
-                        metavar = "Excel",
-                        action="store_true",
-                        help="Write output as Excel file")
+                        default = "Paired")
+    parser.add_argument('Basename',
+                        metavar = "Basename",
+                        action='store',
+                        default='Example',
+                        help='For output files.')
+    parser.add_argument('-i',"--identificator",
+                        metavar="Id attribute",
+                        action='store',
+                        help='GFF attribute to be used as feature ID. i.e. ID=TcCLB.506779.120',
+                        default="ID=")
     parser.add_argument("-f", "--feature",
                         metavar="feature type",
                         action='store',
@@ -120,28 +113,20 @@ def parse_args():
                         choices=['gene', 'CDS','polypeptide'],
                         default = "CDS",
                         widget="Dropdown")
-    parser.add_argument("-experiment",
-                        required=True,
-                        metavar="Type of experiment",
-                        choices=["Single","Paired"],
-                        widget="Dropdown",
-                        help="Single or Paired-End",
+    parser.add_argument('-o','--overlap',
+                        metavar = "Min. overlap length",
                         action='store',
-                        default = "Paired")
-    parser.add_argument("-3UTR", "--polya",
-                        metavar = "3'UTR",
-                        action="store_false",
-                        default=True,
-                        help="Performe 3'UTR detection.")
-    parser.add_argument("-5UTR", "--splicedleader",
-                        metavar = "5'UTR",
-                        action="store_false",
-                        default=True,
-                        help="Performe 5'UTR detection.")
-    parser.add_argument("-s", "--score",
-                        metavar="Report UTR's with negative score",
-                        action="store_true",
-                        default=False)    
+                        help='Cutadapt option: shorter secondary regions are ignored.',
+                        choices=['3','4','5','6','7','8','9','10'],
+                        default = "5",
+                        widget="Dropdown")
+    parser.add_argument('-e', '--error_probability',
+                        metavar="Max. error rate",
+                        action='store',
+                        help='Cutadapt option: All searches for secondary regions are error tolerant',
+                        choices=['0.05','0.03','0.02','0.01','0.005'],
+                        default = "0.01",
+                        widget="Dropdown")
     parser.add_argument("-uf","--fiveutrlen",
                         metavar="5'UTR length",
                         help="Max. 5'UTRs LENGTH",
@@ -160,35 +145,42 @@ def parse_args():
                         choices=['30','50','100','200','300','400','no filter'],
                         default = "200",
                         widget="Dropdown")
+    parser.add_argument('-a','--adapter',
+                        metavar = "Adapter",
+                        action='store',
+                        default='AGATCGGAAGAGC',
+                        help='Adapter sequences to filter out. If none leave empty.')
+    parser.add_argument('-p','--threads',
+                        metavar = "Cores",
+                        help='Number of parallel search cores.',
+                        action="store",
+                        default=4)
+    parser.add_argument("-r", "--rmtemp",
+                        metavar = "Remove temp folder",
+                        default=False,
+                        action="store_true")
+    parser.add_argument("-3UTR", "--polya",
+                        metavar = "3'UTR",
+                        action="store_false",
+                        default=True,
+                        help="Performe 3'UTR detection.")
+    parser.add_argument("-5UTR", "--splicedleader",
+                        metavar = "5'UTR",
+                        action="store_false",
+                        default=True,
+                        help="Performe 5'UTR detection.")
+    parser.add_argument("-s", "--score",
+                        metavar="Report UTR's with negative score",
+                        action="store_true",
+                        default=False)    
     parser.add_argument("-n", "--nbases",
                         metavar="Report UTR's with N's",
                         default=False,
                         action="store_true")
-#    parser.add_argument("-m", "--minimum_length",
-#                        choices=['30','50','70','90','100','120','150'],
-#                        default = "50",
-#                        widget="Dropdown",
-#                        metavar="Length",
-#                        help="Cutadapt option: Discard processed reads that are shorter than this value.")
-    parser.add_argument('-o','--overlap',
-                        metavar = "Min. overlap length",
-                        action='store',
-                        help='Cutadapt option: shorter secondary regions are ignored.',
-                        choices=['3','4','5','6','7','8','9','10'],
-                        default = "5",
-                        widget="Dropdown")
-    parser.add_argument('-e', '--error_probability',
-                        metavar="Max. error rate",
-                        action='store',
-                        help='Cutadapt option: All searches for secondary regions are error tolerant',
-                        choices=['0.05','0.03','0.02','0.01','0.005'],
-                        default = "0.01",
-                        widget="Dropdown")
-    parser.add_argument('-p','--threads',
-                        metavar = "Cores",
-                        help='Bowtie 2 option: Number of parallel search cores.',
-                        action="store",
-                        default=4)
+    parser.add_argument("-x", "--excel",
+                        metavar = "Excel",
+                        action="store_true",
+                        help="Write output as Excel file")
     args = parser.parse_args()
     with open(args_file, 'w') as data_file:
         # Using vars(args) returns the data as a dictionary
@@ -219,7 +211,10 @@ class UTR:
         self.ssite = 0
             
     def hamming_distance(self,s1, s2):
-        assert len(s1) == len(s2)
+        try:
+            assert len(s1) == len(s2)
+        except:
+            pass
         return sum(ch1 != ch2 for ch1, ch2 in zip(s1, s2))
            
     def score_by_multimapping(self):
@@ -651,7 +646,7 @@ def filter_sort_index(genome,fastq,dirout,basename,threads,side,logger):
     os.remove(samfile)
     sortedbam = basename + "_sort" + ".bam"
     out = os.path.join(dirout,"UTRmeSort")
-    commandLine = "samtools sort -O bam -m 8G -@ " + str(threads)+  " -T "+ out + " -o  " + sortedbam + " " + bamfile
+    commandLine = "samtools sort -O bam -T "+ out + " -o  " + sortedbam + " " + bamfile
     runcml(commandLine,"samtools sort","samtools sort error",logger,False)
     commandLine = "samtools index -@ " + str(threads) +" "  + sortedbam
     runcml(commandLine,"samtools index","samtools index error",logger,False)
@@ -779,7 +774,7 @@ def get_adapter(genome,strand,chr,start,end,nameadapter,adapter,side):
                 seq = seq[:-1]
                 len_adapter=len(seq)          
             ref_seq = genome[chr][end:(end + len_adapter)].seq._data       
-            ssite,seq,ref_seq = set_polya_site(strand,seq,ref_seq,start,end)
+            ssite,seq,ref_seq = set_polya_site(strand,seq,ref_seq.upper(),start,end)
         else:
             if seq[0] != "A":
                 start -= 1
@@ -789,7 +784,7 @@ def get_adapter(genome,strand,chr,start,end,nameadapter,adapter,side):
                 seq = seq[:-1]
                 len_adapter=len(seq)
             ref_seq = genome[chr][(start-len_adapter):start].reverse_complement().seq._data     
-            ssite,seq,ref_seq = set_polya_site(strand,seq,ref_seq,start,end)      
+            ssite,seq,ref_seq = set_polya_site(strand,seq,ref_seq.upper(),start,end)      
     return seq,ref_seq,ssite
 
 
@@ -799,7 +794,7 @@ def create_secondary_region_table(closest,report,genomefile,bamfile,identificato
     dfinfo = load_Adapter_Report(report)
     genome = ObtainSeq(genomefile)
     bam = pysam.AlignmentFile(bamfile, "rb")    
-    vfunc = np.vectorize(get_reads)
+    vfunc = np.vectorize(get_reads,cache=True,otypes=[object])
     region = vfunc(bam,dfclosest["Reference_Name"].values, dfclosest["Start"].values, dfclosest["End"].values,dfclosest["gene"].values,dfclosest["strand"].values)
     for r in region:
         chr,start,end,gene,strand = r[:5]
@@ -819,7 +814,7 @@ def create_secondary_region_table(closest,report,genomefile,bamfile,identificato
             else:
                 ref_seq = genome[chr][real_start:real_end].reverse_complement().seq._data
                 query_seq = Seq(query_seq).reverse_complement()._data
-            lista=[chr,start,end,strand,gene,read.query_name,real_start,real_end,query_seq,ref_seq,read.is_reverse,multimap]
+            lista=[chr,start,end,strand,gene,read.query_name,real_start,real_end,query_seq,ref_seq.upper(),read.is_reverse,multimap]
             listr.append(lista)
     columns = ["chr","start","end","strand","gene","QueryName","read_start","read_end","read_sequence","reference_sequence","is_reversed","is_multimapped"]
     del(dfclosest)
@@ -1031,44 +1026,6 @@ def pileup_seq(df):
     del(gdf) 
     #print('pup: Memory usage: %s (kb)' % resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
     return df
-
-#def pileup_score(pileup_pa,pileup_genome):
-#    ref_seq = pileup_genome
-#    pileup_seq = pileup_pa.split(",")
-#    max_len = len(ref_seq)
-#    remove = False
-#    score = 0
-#    mylist=[""]*max_len
-#    for item in pileup_seq:
-#        for i,y in enumerate(item):
-#            mylist[i] = mylist[i] + y #me quedo con todas las letras para cada posicion        
-#    for x in range(0,max_len):
-#            if len(mylist[x]) > 2: #dos o mas bases para comparar
-#                moc = getMaxOccuringChar(mylist[x]) #me quedo con las bases mas abundantes en cada indice.
-#                if len(moc) == 1: #Si hay una sola base maxima.
-#                    if moc[0] != "A": #Si no es A.                        
-#                        if mylist[x].count(moc[0]) == len(mylist[x]):
-#                            remove = True #All the bases are equal, so the probability that is due to a sequencing error is low.
-#                            continue
-#                        elif moc[0] == ref_seq[x]: #Comparation with the references
-#                            if mylist[x].count("A") == 0:                          
-#                                score -= 2*(mylist[x].count(moc[0])/1)
-#                            else:
-#                                score -= 2*(mylist[x].count(moc[0])/mylist[x].count("A"))
-#                    else:
-#                        score += 0 # If the base is in all the xth position in the reads an A.
-#                else:
-#                    if not "A" in moc:
-#                        remove = True #Hay más de una base mayoritaria y ninguna es "A".
-#                        continue
-#                    else:
-#                        score -=  1*(mylist[x].count(moc[0])/mylist[x].count("A"))
-#    if remove:
-#        score = -500
-#        return score
-#    if score == 0:
-#        score = max_len - counterrors(pileup_pa)
-#    return round(score)
 
 def add_pileup_score(df,error_probability):
     df = pileup_seq(df)
@@ -1385,19 +1342,31 @@ def Generate_Indivuals_Reprots(df,fiveutrlen,threeutrlen,excel,output_directory,
         name = basename + "-3-full-report"
     output = os.path.join(output_directory,name)
     if side == 5:
-        save_df(df[["chr","start","end","strand","gene","utr_len","acceptor","ppt","ppt_distance","ppt_len","sprimary","ssecondary","saccesory","individual_score","global_score","score","occurrence","sites","n","orf","max_occurrence","max_score"]].apply(convert),excel,output)
+        dfo = df[["chr","start","end","strand","gene","utr_len","acceptor","ppt","ppt_distance","ppt_len","sprimary","ssecondary","saccesory","individual_score","global_score","score","occurrence","sites","n","orf","max_occurrence","max_score"]].apply(convert)
+        dfo.columns = "chr","start","end","strand","gene","length","acceptor","ppt","ppt_distance","ppt_len","sprimary","ssecondary","saccesory","individual_score","global_score","score","occurrences","# sites","n","orf","max_occurrence","max_score"
+        save_df(dfo,excel,output)
+        del dfo
     else:
-        save_df(df[["chr","start","end","strand","gene","utr_len","sprimary","ssecondary","saccesory","individual_score","global_score","score","occurrence","sites","n","orf","max_occurrence","max_score"]].apply(convert),excel,output)    
+        dfo = df[["chr","start","end","strand","gene","utr_len","sprimary","ssecondary","saccesory","individual_score","global_score","score","occurrence","sites","n","orf","max_occurrence","max_score"]].apply(convert)
+        dfo.columns = "chr","start","end","strand","gene","length","sprimary","ssecondary","saccesory","individual_score","global_score","score","occurrences","# sites","n","orf","max_occurrence","max_score"
+        save_df(dfo,excel,output)    
+        del dfo
     df2 = df.sort_values(['gene','score','occurrence',"utr_len"],ascending=[False,False,False,True]).groupby('gene', as_index=False).first()
     if side==5:
         name = basename + "-5-best-summary"
     else:
         name = basename + "-3-best-summary"
     output = os.path.join(output_directory,name)
-    if side ==5:        
-        save_df(df2[["gene","utr_len","acceptor","score","occurrence","sites"]].apply(convert),excel,output)
+    if side ==5:
+        df2o =  df2[["gene","utr_len","acceptor","score","occurrence","sites"]].apply(convert)
+        df2o.columns = "gene","length","acceptor","score","occurrences","# sites"       
+        save_df(df2o,excel,output)
+        del df2o
     else:
-        save_df(df2[["gene","utr_len","score","occurrence","sites"]].apply(convert),excel,output)
+        df2o =  df2[["gene","utr_len","score","occurrence","sites"]].apply(convert)
+        df2o.columns = "gene","length","score","occurrences","# sites"
+        save_df(df2o,excel,output)
+        del df2o
     return True,df,df2
 
 
@@ -1486,7 +1455,7 @@ def GenerateGFF(annotation,df,dirout,basename,excel,feature,identificador,logger
 #For each column, first it computes the Z-score of each value in the column, relative to the column mean and standard #deviation. Then is takes the absolute of Z-score because the direction does not matter, only if it is below the #threshold. .all(axis=1) ensures that for each row, all column satisfy the constraint. Finally, result of this condition is #used to index the dataframe.
 
 
-def utrmekdeplot(df,p,zdesv,label,legend,dirout,output):
+def utrmekdeplot(df,p,zdesv,label,legend,dirout,output,side):
     try:
         plt.clf()
     except:
@@ -1503,7 +1472,16 @@ def utrmekdeplot(df,p,zdesv,label,legend,dirout,output):
     df = df.select_dtypes(['number']) # I keep only numerical columns
     df = df[(np.abs(stats.zscore(df[p])) < zdesv)]
     l = df[p]
-    fig = sns.kdeplot(l,  shade=True, color="r");
+    if side == 5:
+        if p == "sites":
+            fig = sns.kdeplot(l,  shade=True, bw=.5, label="bw: 0.2",color="b");
+        else:
+            fig = sns.kdeplot(l,  shade=True, color="b");
+    else:
+        if p == "sites":
+            fig = sns.kdeplot(l,  shade=True, bw=.5, label="bw: 0.2",color="r");
+        else:
+            fig = sns.kdeplot(l,  shade=True, color="r");
     x,y = fig.get_lines()[0].get_data()
     cdf = scipy.integrate.cumtrapz(y, x, initial=0)
     nearest_05 = np.abs(cdf-0.5).argmin()
@@ -1511,7 +1489,7 @@ def utrmekdeplot(df,p,zdesv,label,legend,dirout,output):
     y_median = y[nearest_05]
     mv = " median: " + str(int(x_median))
     plt.vlines(x_median, 0, y_median, colors='gray',linestyles='dashed')
-    legend += " - median: " + str(int(df[p].median()))
+    legend += " - median: " + str(int(np.median(l)))
     if p == "utr_len":
         legend += " nt"
     plt.legend([legend])
@@ -1521,7 +1499,7 @@ def utrmekdeplot(df,p,zdesv,label,legend,dirout,output):
     plt.savefig(output)
 
 
-def utrmejointplot(df,zdesv,dirout,output):
+def utrmejointplot(df,zdesv,dirout,output,side):
     try:
         plt.clf()
     except:
@@ -1539,7 +1517,10 @@ def utrmejointplot(df,zdesv,dirout,output):
     df = df[(np.abs(stats.zscore(df["occurrence"])) < zdesv) & (np.abs(stats.zscore(df["score"])) < zdesv)]
     x = df["occurrence"]
     y = df["score"]
-    fig = sns.jointplot(x="occurrence", y="score", data=df, kind="hex", space=0, color="r",stat_func=None);
+    if side == 5:
+        fig = sns.jointplot(x="occurrence", y="score", data=df, kind="hex", space=0, color="b",stat_func=None);
+    else:
+        fig = sns.jointplot(x="occurrence", y="score", data=df, kind="hex", space=0, color="r",stat_func=None);
     o = output + ".pdf"
     output = os.path.join(dirout,o)
     plt.savefig(output)
@@ -1562,7 +1543,7 @@ def vsplot(df,df2,p,label,legtxt,zdesv,dirout,output):
     df = df.select_dtypes(['number']) # I keep only numerical columns
     df = df[(np.abs(stats.zscore(df[p])) < zdesv)]
     x = df[p]
-    fig = sns.kdeplot(x,  shade=True, color="r");
+    fig = sns.kdeplot(x,  shade=True, color="b");
     mv = str(int(x.median()))
     if p == "utr_len":
         legend1 = "5 " + legtxt + " - median: " + mv + " nt"
@@ -1571,7 +1552,7 @@ def vsplot(df,df2,p,label,legtxt,zdesv,dirout,output):
     df2 = df2.select_dtypes(['number']) # I keep only numerical columns
     df2 = df2[(np.abs(stats.zscore(df2[p])) < zdesv)]
     y = df2[p]
-    fig = sns.kdeplot(y,  shade=True, color="b");
+    fig = sns.kdeplot(y,  shade=True, color="r");
     mv = str(int(y.median()))
     if p == "utr_len":
         legend2 = "3 " + legtxt + " - median: " + mv + " nt"
@@ -1604,128 +1585,4 @@ def save_df(df,excel,output):
 
 def main():
     start_time_program = time.time() # initial time counter
-    warnings.simplefilter('ignore', BiopythonWarning)
-    startTime = strftime("%Y-%m-%d;%H:%M:%S", localtime()) # for the log file name
-    conf = parse_args()
-    filename = conf.Basename + "-" + strftime("%Y-%m-%d;%H:%M:%S", localtime()) + ".log"
-    programname = "UTRme"
-    pd.options.mode.chained_assignment = None
-    output_directory = os.getcwd() + "/UTRme_" + strftime("%Y-%m-%d_%H-%M-%S", localtime())
-    if not os.path.exists(output_directory):
-       os.makedirs(output_directory)
-    else:
-       error = output_directory + ": Already exist. We need to create one, but we dont want to remove your own folder so, copy to another location or change the name of your old directory"
-       raise Exception(error)
-    dir = os.path.join(output_directory,"temp")
-    os.makedirs(dir)
-    annot_dir = os.path.join(output_directory,"GFF")
-    os.makedirs(annot_dir)
-    report_dir = os.path.join(output_directory,"Reports")
-    os.makedirs(report_dir)
-    fasta_dir = os.path.join(output_directory,"Fasta")
-    os.makedirs(fasta_dir)
-    fig_dir = os.path.join(output_directory,"Figures")
-    os.makedirs(fig_dir)
-    mssg ="\n > WELCOME TO UTRme: UTRme is a scoring based tool to annotate UTR regions in trypanosomatid genomes\n" 
-    filename = os.path.join(output_directory,filename)
-    logger = loginFunction(filename,programname)
-    print(mssg)
-    logger.info(mssg)    
-    time.sleep(2)
-    sp = "> In this case " + conf.Species + "\n"
-    print(sp)
-    time.sleep(2)
-    print("> UTRme is starting! \n")
-    time.sleep(2)
-    print("> Reads files configuration!\n")
-    checkmerge(conf.FASTQ1,conf.FASTQ2,conf.experiment)
-    fastq1,fastq2 = merge_fastq(conf.FASTQ1,conf.FASTQ2,conf.Basename,dir,conf.experiment)
-    print("> Checking adapter sequence!\n")
-    checkadapter(conf.adapter)
-    tra,trb = adapterquality(fastq1,fastq2,conf.adapter,conf.overlap,conf.error_probability,conf.threads,logger,dir,conf.experiment)
-    closest = bedtools(conf.Genome,conf.Annotation,dir,conf.feature,conf.identificator,logger)
-    ##################################################
-    #################################################
-    #5' UTRs
-    if not conf.splicedleader:
-        print("> Starting with 5'UTRs...\n")
-        time.sleep(2)
-        fastq,report = detect_secondary_regions(tra,trb,conf.overlap, conf.error_probability,conf.threads,logger,dir,conf.Species,5,conf.experiment)
-        bamfile = filter_sort_index(conf.Genome,fastq,dir,conf.Basename,conf.threads,5,logger)
-        #print('Pre Score: Memory usage: %s (kb)' % resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
-        df = final_score(conf.Genome,report,closest,bamfile,conf.identificator,5,conf.error_probability)
-        #print('Score: Memory usage: %s (kb)' % resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
-        booleansl,dfa,dfbsl = Generate_Indivuals_Reprots(df,conf.fiveutrlen,conf.threeutrlen,conf.excel,report_dir,conf.Basename,conf.score,conf.orf,conf.nbases,5) #Both best score, and all sites.
-        del(df)
-        #print('Reports: Memory usage: %s (kb)' % resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
-        mssg = "> Reporting 5'UTRs..."
-        logger.info(mssg)
-        if not booleansl:
-            print("> Can not find 5' UTRs!\n")
-        else:
-            GenerateFasta(dfa,conf.Basename,fasta_dir,conf.Genome,5,"All")
-            GenerateFasta(dfbsl,conf.Basename,fasta_dir,conf.Genome,5,"Best")
-            GenerateGFF(conf.Annotation,dfa,annot_dir,conf.Basename,conf.excel,conf.feature,conf.identificator,logger,5,"All")
-            del(dfa)
-            GenerateGFF(conf.Annotation,dfbsl,annot_dir,conf.Basename,conf.excel,conf.feature,conf.identificator,logger,5,"Best")
-            #print('GFF: Memory usage: %s (kb)' % resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
-            utrmekdeplot(dfbsl,"score",3,"score","score",fig_dir,"5utr-score")
-            utrmekdeplot(dfbsl,"sites",3,"sites","sites",fig_dir,"5utr-sites")
-            utrmekdeplot(dfbsl,"utr_len",3,"nucleotide","length",fig_dir,"5utr-length")
-            utrmejointplot(dfbsl,3,fig_dir,"5utr-score_vs_ocurrence")
-            #print('Graphics: Memory usage: %s (kb)' % resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
-            end_time = time.time()
-            fiveInfo = "The analysis of the 5' UTRs has a execution time of: " + timer(start_time_program,end_time) + "."
-            logger.info(fiveInfo)    
-            print("> The analysis of the 5' UTRs, is finished!\n")
-    else:
-        booleansl = False
-        print("> The analysis of the 5' UTRs, was not selected!\n")
-    if not conf.polya:
-        print("> Starting with 3'UTRs...\n")
-        time.sleep(2)
-        fastq,report = detect_secondary_regions(tra,trb,conf.overlap, conf.error_probability,conf.threads,logger,dir,conf.Species,3,conf.experiment)
-        bamfile = filter_sort_index(conf.Genome,fastq,dir,conf.Basename,conf.threads,3,logger)
-        mssg = "> Scoring 3'UTRs..."
-        logger.info(mssg)
-        df = final_score(conf.Genome,report,closest,bamfile,conf.identificator,3,conf.error_probability) 
-        booleanpa,dfa,dfbpa = Generate_Indivuals_Reprots(df,conf.fiveutrlen,conf.threeutrlen,conf.excel,report_dir,conf.Basename,conf.score,conf.orf,conf.nbases,3) #Both best score, and all sites.
-        del(df)
-        mssg = "> Reporting 3'UTRs..."
-        logger.info(mssg)
-        if not booleanpa:
-            print("> Can not find 3' UTRs!\n")
-        else:
-            GenerateFasta(dfa,conf.Basename,fasta_dir,conf.Genome,3,"All")
-            GenerateFasta(dfbpa,conf.Basename,fasta_dir,conf.Genome,3,"Best")
-            GenerateGFF(conf.Annotation,dfa,annot_dir,conf.Basename,conf.excel,conf.feature,conf.identificator,logger,3,"All")
-            del(dfa)
-            GenerateGFF(conf.Annotation,dfbpa,annot_dir,conf.Basename,conf.excel,conf.feature,conf.identificator,logger,3,"Best")
-            utrmekdeplot(dfbpa,"score",3,"score","score",fig_dir,"3utr-score")
-            utrmekdeplot(dfbpa,"utr_len",3,"nucleotide","length",fig_dir,"3utr-length")
-            utrmekdeplot(dfbpa,"sites",3,"sites","sites",fig_dir,"3utr-sites")
-            utrmejointplot(dfbpa,3,fig_dir,"3utr-score_vs_ocurrence")
-            end_time = time.time()
-            threeInfo = "> The analysis of the 3' UTRs has a execution time of: " + timer(start_time_program,end_time) + "."
-            logger.info(threeInfo) 
-            print("> The analysis of the 3' UTRs, is finished!\n")
-    else:
-        booleanpa = False
-        print("> The analysis of the 3' UTRs, was not selected!\n")
-    if booleanpa and booleansl:
-        vsplot(dfbsl,dfbpa,"score","Score","score",3,fig_dir,"vsplot-score")
-        vsplot(dfbsl,dfbpa,"utr_len","UTR Length","length",3,fig_dir,"vsplot-length")
-        vsplot(dfbsl,dfbpa,"sites","Gene sites","sites",3,fig_dir,"vsplot-sites")
-        del(dfbsl)
-        del(dfbpa)    
-    #Finishing    
-    os.remove(closest)
-    if conf.rmtemp:
-        if "temp" in dir:
-            remove_folder(dir)
-    end_time_program = time.time()
-    exitProgram= "> The whole program has a execution time of: " + timer(start_time_program,end_time_program) + ".\n"
-    logger.info(exitProgram)
-    print(exitProgram)
-    print('Program: Memory usage: %s (kb)' % resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
-    print("> Thanks you so much for using UTRme....Good Bye!")
+    warnin
