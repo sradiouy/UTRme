@@ -3,13 +3,37 @@
 
 ## Installation
 
-$ conda config --add channels defaults
+If you donot have conda/miniconda installed, first you will need to install it:
 
-$ conda config --add channels conda-forge
+* $ wget [https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh](https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh)
+* $ bash Miniconda3-latest-Linux-x86_64.sh
+  * * if you want to read more about [miniconda]https://conda.io/miniconda.html*
 
-$ conda config --add channels bioconda
+Once Miniconda is installed, you need to install utrme:
 
-$ conda install -c sradiouy utrme
+ 1. $ conda config --add channels defaults
+
+ 1. $ conda config --add channels conda-forge
+
+ 1. $ conda config --add channels bioconda
+
+ 1. $ conda install -c sradiouy utrme
+
+If you have conda:
+
+1. $ conda install -c sradiouy utrme
+
+If this donot work you need to configure conda like this:
+ 
+ 1. $ conda config --add channels defaults
+
+ 1. $ conda config --add channels conda-forge
+
+ 1. $ conda config --add channels bioconda
+ 
+ And then install utrme:
+
+ 1. $ conda install -c sradiouy utrme
 
 
 
@@ -21,11 +45,11 @@ The trypanosomatid linage includes a variety of parasitic protozoans causing a s
 
 The software was written in python (version 3) and depends on cutadapt, bedtools, bowtie2, samtools and several python modules which are automatically configured during installation. 
 
+UTRme needs a reference genome (sequence and annotation) (which can be obtained from http://tritrypdb.org/) and raw reads from a RNA-seq experiment. UTRme can use RNA-seq data either sinlge-end or paired-end. 
+
 
 ![UTRME1](https://github.com/sradiouy/UTRme/blob/master/utrme1.png)
 
-
-UTRme needs a reference genome (sequence and annotation) (which can be obtained from http://tritrypdb.org/) and raw reads from a RNA-seq experiment. UTRme can use RNA-seq data either sinlge-end or paired-end. 
 
 **Required arguments:**
 
