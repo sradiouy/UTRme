@@ -86,12 +86,49 @@ UTRme needs a reference genome (sequence and annotation) (which can be obtained 
 
 * Feature Type
   * *Feature type (3rd column in GFF/GFF3 file) to be used, all features of other type are ignored*
+  * For example:
      * CDS
      * gene
      * mRNA
 
 * Min. overlap length
-  * Cutadapt option: shorter secondary regions are ignored.*
+  * *Cutadapt option: shorter secondary regions are ignored.*
+    * 3 
+    * 4 
+    * 5 *default*
+    * 6 
+    * 7 
+    * 8 
+    * 9 
+    * 10
   
+* Max. error rate
+  * *Cutadapt option: All searches for secondary regions are error tolerant*
+    * 0.05
+    * 0.03
+    * 0.02
+    * 0.01 *default*
+    * 0.005
 
-<span style="color:red">red</span>
+* 5'UTR length
+
+* 3'UTR length
+
+* Max. ORF length (aa) in UTR
+
+* Adapter
+
+* Cores
+
+* Remove temporary directory
+
+* 5'UTR
+
+* 3'UTR
+
+* Report UTR's with negative score
+
+* Report UTR's with N's
+
+* Excel
+  
