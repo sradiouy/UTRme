@@ -85,5 +85,13 @@ UTRme needs a reference genome (sequence and annotation) (which can be obtained 
     * *ID=*
 
 * Feature Type
+  * *Feature type (3rd column in GFF/GFF3 file) to be used, all features of other type are ignored*
+     * CDS
+     * gene
+     * mRNA
+
+* Min. overlap length
+  * *[Cutadapt](https://placehold.it/15/f03c15/000000?text=+) `#f03c15` option: shorter secondary regions are ignored.*
+  
 
 
