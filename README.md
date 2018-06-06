@@ -1,14 +1,14 @@
 # UTRme: a scoring based tool to annotate UTR regions in trypanosomatid genomes 
 
+*The trypanosomatid linage includes a variety of parasitic protozoans causing a significant worldwide problem burden on human health. Given their peculiar mechanisms of gene expression, these organisms depend on post-transcriptional regulation as the main level of gene expression control. Most signals involved in these regulatory networks are located in the untranslated regions (UTRs) of the mRNAs. To deepen our understanding of gene expression regulation we need to identify these regions with high accuracy. Therefore, we have created UTRme (UTR-mini-exon), a GUI stand-alone application to identify and annotate 5’ and 3’ UTR regions. UTRme implements a multiple scoring system to address the issue of false positive UTR assignment that frequently arise because of the characteristics of the available genomes. The tool offers a way for nonbioinformaticians to precisely determine UTRs from transcriptomic data.*
 
 ## How to install UTRme?
 
-**If you do not have [conda/miniconda](https://conda.io/miniconda.html) installed, first you must first install it**
+**If you do not have [conda/miniconda](https://conda.io/miniconda.html) installed, you must first install it**
 
  1. wget [https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh](https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh)
 
  1. bash Miniconda3-latest-Linux-x86_64.sh
-
 
 **Once conda/miniconda is installed, you must install utrme:**
 
@@ -26,20 +26,16 @@
 
 **If the previous step does not work, you must first configure the conda channels, and then install utrme, as in the instructions above.**
 
-
-The trypanosomatid linage includes a variety of parasitic protozoans causing a significant worldwide problem burden on human health. Given their peculiar mechanisms of gene expression, these organisms depend on post-transcriptional regulation as the main level of gene expression control. Most signals involved in these regulatory networks are located in the untranslated regions (UTRs) of the mRNAs. To deepen our understanding of gene expression regulation we need to identify these regions with high accuracy. Therefore, we have created UTRme (UTR-mini-exon), a GUI stand-alone application to identify and annotate 5’ and 3’ UTR regions. UTRme implements a multiple scoring system to address the issue of false positive UTR assignment that frequently arise because of the characteristics of the available genomes. The tool offers a way for nonbioinformaticians to precisely determine UTRs from transcriptomic data.
-
-## Pipeline description 
+## How to use UTRme?
 
 The software was written in python (version 3) and depends on cutadapt, bedtools, bowtie2, samtools and several python modules which are automatically configured during installation. 
 
 UTRme needs a reference genome (sequence and annotation) (which can be obtained from http://tritrypdb.org/) and raw reads from a RNA-seq experiment. UTRme can use RNA-seq data either sinlge-end or paired-end. 
 
 
+### Required arguments:
+
 ![UTRME1](https://github.com/sradiouy/UTRme/blob/master/utrme1.png)
-
-
-**Required arguments:**
 
 * FASTQ files location (1)
   * *Folder where the fastq files (gzipped or not) are located.*
@@ -79,6 +75,10 @@ UTRme needs a reference genome (sequence and annotation) (which can be obtained 
 * Basename
   * *Basename of the output files.*
  
+
+### Optional arguments:
+
+
 
 The program starts with the removal of adapter sequences and trimming of low-quality ends from reads using cutadapt. By default, UTRme trims the Illumina TrueSeq adapter, but any sequence can be specified by the user. After that, cutadapt is used to identify the reads containing putative poly(A)  (PA) tails or spliced-leader (SL) sequences (secondary regions), allowing for mismatches. By default, we use an error probability 0.01 for poly(A) sequences (adjustable by the user) and one mismatch for SL sequences. In addition, the user can specify the minimum length of the identified secondary region. In order to correctly identify the trans-splicing sites, the user must also select the organism. Currently, Leishmania major, Trypanosoma brucei and Trypanosoma cruzi are available, however the number of available species can easily grow by including more species specific spliced-leader sequences. 
 
