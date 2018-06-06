@@ -7,7 +7,7 @@ If you do not have conda/miniconda installed, first you must first install it:
 
 * $ wget [https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh](https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh)
 * $ bash Miniconda3-latest-Linux-x86_64.sh
-  * * if you want to read more about [miniconda](https://conda.io/miniconda.html)*
+  * *if you want to read more about [miniconda](https://conda.io/miniconda.html)*
 
 **Once conda/miniconda is installed, you must install utrme:**
 
