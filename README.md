@@ -161,7 +161,7 @@ UTRme needs a reference genome (sequence and annotation) (which can be obtained 
 
 * Adapter
   * *Adapter sequences to filter out. If none leave empty.*
-    * AGATCGGAAGAGC **      default:  Illumina standard adapters**
+    * AGATCGGAAGAGC **default:  Illumina standard adapters**
 
 * Cores
   * *Number of parallel search cores.*
