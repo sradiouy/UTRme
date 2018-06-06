@@ -1,31 +1,30 @@
-# UTRme
+# UTRme: a scoring based tool to annotate UTR regions in trypanosomatid genomes 
 
 
-## Installation
+## How to install UTRme?
 
-If you do not have conda/miniconda installed, first you must first install it:
+**If you do not have conda/miniconda installed, first you must first install it**
 
-* $ wget [https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh](https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh)
-* $ bash Miniconda3-latest-Linux-x86_64.sh
-  * *if you want to read more about [miniconda](https://conda.io/miniconda.html)*
+1. wget [https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh](https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh)
+1. bash Miniconda3-latest-Linux-x86_64.sh
+  1. *if you want to read more about [miniconda](https://conda.io/miniconda.html)*
 
 **Once conda/miniconda is installed, you must install utrme:**
 
- 1. $ conda config --add channels defaults
+ 1. conda config --add channels defaults
 
- 1. $ conda config --add channels conda-forge
+ 1. conda config --add channels conda-forge
 
- 1. $ conda config --add channels bioconda
+ 1. conda config --add channels bioconda
 
- 1. $ conda install -c sradiouy utrme
+ 1. conda install -c sradiouy utrme
 
 **If you previously have a conda/miniconda installed:**
 
-1. $ conda install -c sradiouy utrme
+1. conda install -c sradiouy utrme
 
 **If the previous step does not work, you must first configure the conda channels, and then install utrme, as in the instructions above.**
 
-## UTRme: a scoring based tool to annotate UTR regions in trypanosomatid genomes 
 
 The trypanosomatid linage includes a variety of parasitic protozoans causing a significant worldwide problem burden on human health. Given their peculiar mechanisms of gene expression, these organisms depend on post-transcriptional regulation as the main level of gene expression control. Most signals involved in these regulatory networks are located in the untranslated regions (UTRs) of the mRNAs. To deepen our understanding of gene expression regulation we need to identify these regions with high accuracy. Therefore, we have created UTRme (UTR-mini-exon), a GUI stand-alone application to identify and annotate 5’ and 3’ UTR regions. UTRme implements a multiple scoring system to address the issue of false positive UTR assignment that frequently arise because of the characteristics of the available genomes. The tool offers a way for nonbioinformaticians to precisely determine UTRs from transcriptomic data.
 
