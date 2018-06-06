@@ -36,15 +36,17 @@ UTRme needs a reference genome (sequence and annotation) (which can be obtained 
 
 
 * FASTQ files location (2)
-  * *Folder where the fastq files (gzipped or not) are located.*
-   * *Pair 2 or same folder as FASTQ files location (1) if the experiment is single-end.*
+ * *Folder where the fastq files (gzipped or not) are located.*
+  * *Pair 2 or same folder as FASTQ files location (1) if the experiment is single-end.*
   
+
 
 
 * Genome
  * *Reference genome in fasta format.* 
-   * *Can be obtained from  [tritrypdb!](http://tritrypdb.org/)*
+  * *Can be obtained from  [tritrypdb!](http://tritrypdb.org/)*
    
+
 
 * Annotation
  * *Annotation of the genome in gff/gff3 format.*
