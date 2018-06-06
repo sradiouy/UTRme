@@ -78,6 +78,12 @@ UTRme needs a reference genome (sequence and annotation) (which can be obtained 
 
 ### Optional arguments:
 
+![UTRME2](https://github.com/sradiouy/UTRme/blob/master/utrme2.png)
 
+* ID Attribute
+  * *GFF attribute to be used as feature ID. i.e. ID=TcCLB.506779.120*
+    * *ID=*
+
+* Feature Type
 
 
