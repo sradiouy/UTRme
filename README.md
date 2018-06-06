@@ -3,13 +3,13 @@
 
 ## Installation
 
-If you donot have conda/miniconda installed, first you will need to install it:
+If you do not have conda/miniconda installed, first you must first install it:
 
 * $ wget [https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh](https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh)
 * $ bash Miniconda3-latest-Linux-x86_64.sh
-  * * if you want to read more about [miniconda]https://conda.io/miniconda.html*
+  * * if you want to read more about [miniconda](https://conda.io/miniconda.html)*
 
-Once Miniconda is installed, you need to install utrme:
+**Once conda/miniconda is installed, you must install utrme:**
 
  1. $ conda config --add channels defaults
 
@@ -19,23 +19,11 @@ Once Miniconda is installed, you need to install utrme:
 
  1. $ conda install -c sradiouy utrme
 
-If you have conda:
+**If you previously have a conda/miniconda installed:**
 
 1. $ conda install -c sradiouy utrme
 
-If this donot work you need to configure conda like this:
- 
- 1. $ conda config --add channels defaults
-
- 1. $ conda config --add channels conda-forge
-
- 1. $ conda config --add channels bioconda
- 
- And then install utrme:
-
- 1. $ conda install -c sradiouy utrme
-
-
+**If the previous step does not work, you must first configure the conda channels, and then isntall utrme, as in the instructions above.**
 
 ## UTRme: a scoring based tool to annotate UTR regions in trypanosomatid genomes 
 
