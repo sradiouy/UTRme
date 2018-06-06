@@ -86,7 +86,7 @@ UTRme needs a reference genome (sequence and annotation) (which can be obtained 
 
 * Feature Type
   * *Feature type (3rd column in GFF/GFF3 file) to be used, all features of other type are ignored*
-  * For example:
+  * *For example:*
      * CDS
      * gene
      * mRNA
@@ -95,7 +95,7 @@ UTRme needs a reference genome (sequence and annotation) (which can be obtained 
   * *Cutadapt option: shorter secondary regions are ignored.*
     * 3 
     * 4 
-    * 5 *default*
+    * 5   **default**
     * 6 
     * 7 
     * 8 
@@ -107,28 +107,59 @@ UTRme needs a reference genome (sequence and annotation) (which can be obtained 
     * 0.05
     * 0.03
     * 0.02
-    * 0.01 *default*
+    * 0.01   **default**
     * 0.005
 
 * 5'UTR length
+  * *Maximum length of the  5 'UTR region.*
+    * 500
+    * 1000  **default**
+    * 2000
+    * 3000
+    * 5000
+    * 10000
+    * no filter
 
 * 3'UTR length
+  * *Maximum length of the  5 'UTR region.*
+    * 500
+    * 1000
+    * 2000
+    * 3000  **default**
+    * 5000
+    * 10000
+    * no filter  
 
 * Max. ORF length (aa) in UTR
+  * *Do not report UTR with ORFs longer than this value.*
+    * 30
+    * 50
+    * 100
+    * 200  **default**
+    * 300
+    * 400
+    * no filter
 
 * Adapter
+  * *Adapter sequences to filter out. If none leave empty.*
+    * AGATCGGAAGAGC **default:  Illumina standard adapters**
 
 * Cores
+  * *Number of parallel search cores.*
 
 * Remove temporary directory
+  * *Remove the container folder from temporary files created during the execution of UTRme.*
 
 * 5'UTR
+  * *Performe 5'UTR detection.*
 
 * 3'UTR
+  * *Performe 3'UTR detection.*
 
 * Report UTR's with negative score
 
 * Report UTR's with N's
 
 * Excel
+  * *Report results as excel files instead of tabular ones.*
   
