@@ -91,7 +91,7 @@ UTRme needs a reference genome (sequence and annotation) (which can be obtained 
      * mRNA
 
 * Min. overlap length
-  * * <span style=“color:green;”> Cutadapt </span> option: shorter secondary regions are ignored.*
+  * Cutadapt option: shorter secondary regions are ignored.*
   
 
-
+<span style="color:red">red</span>
