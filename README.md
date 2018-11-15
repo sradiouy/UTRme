@@ -1,4 +1,4 @@
-# UTRme: scoring-based annotation of UTR regions in trypanosomatid genomes
+# UTRme: a scoring-based tool to annotate untranslated regions in trypanosomatid genomes
 
 **Motivation**:
 *Most  signals  involved  in  post-transcriptional  regulatory  networks  are 
@@ -82,12 +82,15 @@ UTRme needs a reference genome (sequence and annotation) (which can be obtained 
     * *T. cruzi*
     * *T. brucei* 
     * *L. major*
+    * *Other*
   
 * Type of experiment
   * *Single-end*
   * *Paired*
   
- 
+* Splice-Leader seq
+  * *SL sequence of interest. Remember to put "Other" in Organism*
+
 * Basename
   * *Basename of the output files.*
  
@@ -159,6 +162,9 @@ UTRme needs a reference genome (sequence and annotation) (which can be obtained 
 * Adapter
   * *Adapter sequences to filter out. If none leave empty.*
     * AGATCGGAAGAGC **default:  Illumina standard adapters**
+    
+* Multimapping
+  * *Remove multimapping reads.*
 
 * Cores
   * *Number of parallel search cores.*
