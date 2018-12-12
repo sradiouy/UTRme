@@ -86,9 +86,14 @@ def parse_args():
                         metavar="Organisim",
                         help="For SL search",
                         action='store',
-                        choices=['T. cruzi','T. brucei','L. major'],
+                        choices=['T. cruzi','T. brucei','L. major','Other'],
                         default = "T. cruzi",
                         widget="Dropdown")
+    parser.add_argument('slseq',
+                        metavar = "Spliced-leader seq",
+                        action='store',
+                        default='ATGC',
+                        help='If you select "Other" write your specific spliced leader sequence. Otherwise leave "ATGC".')
     parser.add_argument("experiment",
                         metavar="Type of experiment",
                         choices=["Single","Paired"],
@@ -110,7 +115,7 @@ def parse_args():
                         metavar="feature type",
                         action='store',
                         help='Feature type (3rd column in GFF file) to be used, all features of other type are ignored',
-                        choices=['gene', 'CDS','polypeptide'],
+                        choices=['gene', 'CDS','polypeptide','mRNA'],
                         default = "CDS",
                         widget="Dropdown")
     parser.add_argument('-o','--overlap',
@@ -149,12 +154,17 @@ def parse_args():
                         metavar = "Adapter",
                         action='store',
                         default='AGATCGGAAGAGC',
-                        help='Adapter sequences to filter out. If none leave empty.')
+                        help='Adapter sequences to filter out. If none put NO.')
     parser.add_argument('-p','--threads',
                         metavar = "Cores",
                         help='Number of parallel search cores.',
                         action="store",
                         default=4)
+    parser.add_argument('-m','--multimapping',
+                        metavar = "multimapping",
+                        help='Remove multimapping reads',
+                        action="store_true",
+                        default=True)                      
     parser.add_argument("-r", "--rmtemp",
                         metavar = "Remove temp folder",
                         default=False,
@@ -365,9 +375,30 @@ def runcml(cml,program,error,logger,bool):
         if bool:
             return stdout
 
-def splice_leader(species):
-    sl = {"T. cruzi":"AACTAACGCTATTATTGATACAGTTTCTGTACTATATTG","T. brucei":"AACTAACGCTATTATTAGAACAGTTTCTGTACTATATTG","L. major":"AACTAACGCTATATAAGTATCAGTTTCTGTACTTTATTG"}
+def splice_leader(species,slseq):
+    sl = {"T. cruzi":"AACTAACGCTATTATTGATACAGTTTCTGTACTATATTG","T. brucei":"AACTAACGCTATTATTAGAACAGTTTCTGTACTATATTG","L. major":"AACTAACGCTATATAAGTATCAGTTTCTGTACTTTATTG","Other":slseq}
+    print("Using:",species,sl[species])
     return sl[species]
+
+
+def check_sl(species,slseq):
+    if species == "Other":
+        seq = splice_leader(species,slseq)
+        if seq == "":
+            mssg = "Other species was selected. You need to put some spliced leader sequence."
+            print(mssg)
+            raise Exception(mssg)
+        elif len(seq) < 10 or len(seq) >= 100:
+            mssg = "Spliced-leader sequence must be longer than ten and shorter than 100 pb."
+            print(mssg)
+            raise Exception(mssg)
+        elif not all(i in "ACTG" for i in seq.upper()):
+            mssg = "Not valid spliced-leader sequence. Please check."
+            print(mssg)
+            raise Exception(mssg)
+    else:
+        pass
+    return None
 
 
 def merge_fastq(Fastq1Dir,Fastq2Dir,basename,out_dir,experiment):
@@ -435,7 +466,7 @@ def checkmerge(dirfastq1,dirfastq2,experiment):
 
 def checkadapter(adapter):
     check = True
-    if adapter != "":          
+    if adapter.upper() != "NO":          
         check = bool(re.match('^[ACTG]+$',adapter.upper()))
     if not check:
         raise NameError('Check your Adapter sequence! Must have only ACTG chars.')
@@ -444,16 +475,17 @@ def checkadapter(adapter):
 def adapterquality(fastq1,fastq2,adapter,overlap,e,threads,logger,dir,experiment):
     tra = os.path.join(dir,"qr1.fastq.gz")
     if experiment == "Single":
-        if adapter != "":
+        if adapter.upper() != "NO":
             commandLine = "cutadapt -q 3,3 --quiet --cores " + str(threads) + " -e " + str(e) + " --overlap "+ str(overlap) + " -a " + adapter + "$" + " --quality-base 33 -o " + tra + " " + fastq1
         else:
             commandLine = "cutadapt -q 3,3 --quiet --cores " + str(threads) + " -e " + str(e) + " --overlap "+ str(overlap) + " --quality-base 33 -o " + tra + " " + fastq1
     else:
         trb = os.path.join(dir,"qr2.fastq.gz")
-        if adapter != "":
+        if adapter.upper() != "NO":
             commandLine = "cutadapt --quiet -e " + str(e) + " --cores " + str(threads) + " --overlap "+ str(overlap) + " -a " + adapter + "$" + " -A " + adapter + "$" + " --quality-base 33 -o " + tra + " -p " + trb + " " + fastq1 + " " + fastq2
         else:
             commandLine = "cutadapt --quiet -e " + str(e) + " --cores " + str(threads) + " --overlap "+ str(overlap) + " --quality-base 33 -o " + tra + " -p " + trb + " " + fastq1 + " " + fastq2
+            print(commandLine)
     runcml(commandLine,"cutadapt quality and adapter filtering","cutadapt quality and adapter filtering error",logger,False)
     if experiment == "Single":
         return tra,tra
@@ -558,7 +590,7 @@ def bedtools(genome,annotation,dirout,features,identificador,logger):
 
 #START: Detection of Secondary Regions
 
-def detect_secondary_regions(tra,trb,overlap, e, threads,logger,dir,species,side,experiment):
+def detect_secondary_regions(tra,trb,overlap, e, threads,logger,dir,species,slseq,side,experiment):
     report = os.path.join(dir,"report")
     if tra.endswith('.gz'):
         tra2 = os.path.join(dir,"sr1.fastq.gz")
@@ -573,8 +605,9 @@ def detect_secondary_regions(tra,trb,overlap, e, threads,logger,dir,species,side
         T = 'T{100}'
         e = str(e)
     else:
-        T = splice_leader(species)
+        T = splice_leader(species,slseq)
         A = Seq(T).reverse_complement()._data
+        print(A,T)
         e = "0.03"
     commandLine = "cutadapt --quiet --trimmed-only --minimum-length 30 --no-trim -x P1 --cores " + str(threads) +  " -e " + e + " --overlap "+ str(overlap) + " -a " + A + " -g " + T + " --quality-base 33 -o " + tra2 + " " + tra
     runcml(commandLine,"cutadapt secondary region detection","cutadapt detection error",logger,False)
@@ -841,7 +874,7 @@ def create_secondary_region_table(closest,report,genomefile,bamfile,identificato
 
 #START: CREATE SCORE TABLE 
 
-def addscoreinclass(df,genomefile,bamfile,side):
+def addscoreinclass(df,genomefile,bamfile,mmap,side):
     list_row  = df.values.tolist()
     lists = []
     genome = ObtainSeq(genomefile)
@@ -851,6 +884,8 @@ def addscoreinclass(df,genomefile,bamfile,side):
         r.intergenic_id = r.chr  + "_" + str(r.start) + "_" + str(r.end)
         adapter_len = len(r.srread)
         smmap = r.score_by_multimapping()
+        if mmap and smmap < 0:
+        	smmap = -150 
         snerrors = r.score_by_numerrors()
         saccesory = smmap + snerrors
         sprimary,fzremove = r.primary_score()
@@ -1251,21 +1286,21 @@ def add_norf_score(genome,df,side):
     return df
 
 
-def final_score(genomefile,report,closest,bamfile,identificator,side,error_probability):
+def final_score(genomefile,report,closest,bamfile,identificator,side,error_probability,mmap):
     genome = ObtainSeq(genomefile)             
     if side == 5:
         print("> Filtering out 5' secondary regions!\n")  
         df = create_secondary_region_table(closest,report,genomefile,bamfile,identificator,side)      
         print("> Adding scores in 5'UTRs!\n")
-        df = addscoreinclass(df,genomefile,bamfile,side)
+        df = addscoreinclass(df,genomefile,bamfile,mmap,side)
         df = global_score_sl(df)
         df = groupby_ssite(df,side)
         df = add_norf_score(genome,df,side)
         df = add_ptt_info(genome,df)
     else:
         print("> Filtering out  3' secondary regions!\n")   
-        df = create_secondary_region_table(closest,report,genomefile,bamfile,identificator,side)      
-        df = addscoreinclass(df,genomefile,bamfile,side)
+        df = create_secondary_region_table(closest,report,genomefile,bamfile,identificator,side)
+        df = addscoreinclass(df,genomefile,bamfile,mmap,side)
         df =global_score_pa(df,error_probability)
         df = groupby_ssite(df,side)
         #df = add_seq(genome,df,side)
@@ -1499,6 +1534,7 @@ def utrmekdeplot(df,p,zdesv,label,legend,dirout,output,side):
     plt.savefig(output)
 
 
+
 def utrmejointplot(df,zdesv,dirout,output,side):
     try:
         plt.clf()
@@ -1551,6 +1587,8 @@ def vsplot(df,df2,p,label,legtxt,zdesv,dirout,output):
         legend1 = "5 " + legtxt + " - median: " + mv    
     df2 = df2.select_dtypes(['number']) # I keep only numerical columns
     df2 = df2[(np.abs(stats.zscore(df2[p])) < zdesv)]
+    if p == "sites":
+        y = df2[p].round()
     y = df2[p]
     fig = sns.kdeplot(y,  shade=True, color="r");
     mv = str(int(y.median()))
@@ -1585,4 +1623,129 @@ def save_df(df,excel,output):
 
 def main():
     start_time_program = time.time() # initial time counter
-    warnin
+    warnings.simplefilter('ignore', BiopythonWarning)
+    startTime = strftime("%Y-%m-%d;%H:%M:%S", localtime()) # for the log file name
+    conf = parse_args()
+    filename = conf.Basename + "-" + strftime("%Y-%m-%d;%H:%M:%S", localtime()) + ".log"
+    programname = "UTRme"
+    pd.options.mode.chained_assignment = None
+    output_directory = os.getcwd() + "/UTRme_" + strftime("%Y-%m-%d_%H-%M-%S", localtime())
+    if not os.path.exists(output_directory):
+       os.makedirs(output_directory)
+    else:
+       error = output_directory + ": Already exist. We need to create one, but we dont want to remove your own folder so, copy to another location or change the name of your old directory"
+       raise Exception(error)
+    dir = os.path.join(output_directory,"temp")
+    os.makedirs(dir)
+    annot_dir = os.path.join(output_directory,"GFF")
+    os.makedirs(annot_dir)
+    report_dir = os.path.join(output_directory,"Reports")
+    os.makedirs(report_dir)
+    fasta_dir = os.path.join(output_directory,"Fasta")
+    os.makedirs(fasta_dir)
+    fig_dir = os.path.join(output_directory,"Figures")
+    os.makedirs(fig_dir)
+    mssg ="\n > WELCOME TO UTRme: UTRme is a scoring based tool to annotate UTR regions in trypanosomatid genomes\n" 
+    filename = os.path.join(output_directory,filename)
+    logger = loginFunction(filename,programname)
+    print(mssg)
+    logger.info(mssg)    
+    time.sleep(2)
+    sp = "> In this case " + conf.Species + "\n"
+    print(sp)
+    time.sleep(2)
+    print("> UTRme is starting! \n")
+    time.sleep(2)
+    print("> Reads files configuration!\n")
+    check_sl(conf.Species,conf.slseq)
+    checkmerge(conf.FASTQ1,conf.FASTQ2,conf.experiment)
+    fastq1,fastq2 = merge_fastq(conf.FASTQ1,conf.FASTQ2,conf.Basename,dir,conf.experiment)
+    print("> Checking adapter sequence!\n")
+    checkadapter(conf.adapter)
+    tra,trb = adapterquality(fastq1,fastq2,conf.adapter,conf.overlap,conf.error_probability,conf.threads,logger,dir,conf.experiment)
+    closest = bedtools(conf.Genome,conf.Annotation,dir,conf.feature,conf.identificator,logger)
+    ##################################################
+    #################################################
+    #5' UTRs
+    if not conf.splicedleader:
+        print("> Starting with 5'UTRs...\n")
+        time.sleep(2)
+        fastq,report = detect_secondary_regions(tra,trb,conf.overlap, conf.error_probability,conf.threads,logger,dir,conf.Species,conf.slseq,5,conf.experiment)
+        bamfile = filter_sort_index(conf.Genome,fastq,dir,conf.Basename,conf.threads,5,logger)
+        #print('Pre Score: Memory usage: %s (kb)' % resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+        df = final_score(conf.Genome,report,closest,bamfile,conf.identificator,5,conf.error_probability,conf.multimapping)
+        #print('Score: Memory usage: %s (kb)' % resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+        booleansl,dfa,dfbsl = Generate_Indivuals_Reprots(df,conf.fiveutrlen,conf.threeutrlen,conf.excel,report_dir,conf.Basename,conf.score,conf.orf,conf.nbases,5) #Both best score, and all sites.
+        del(df)
+        #print('Reports: Memory usage: %s (kb)' % resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+        mssg = "> Reporting 5'UTRs..."
+        logger.info(mssg)
+        if not booleansl:
+            print("> Can not find 5' UTRs!\n")
+        else:
+            GenerateFasta(dfa,conf.Basename,fasta_dir,conf.Genome,5,"All")
+            GenerateFasta(dfbsl,conf.Basename,fasta_dir,conf.Genome,5,"Best")
+            GenerateGFF(conf.Annotation,dfa,annot_dir,conf.Basename,conf.excel,conf.feature,conf.identificator,logger,5,"All")
+            del(dfa)
+            GenerateGFF(conf.Annotation,dfbsl,annot_dir,conf.Basename,conf.excel,conf.feature,conf.identificator,logger,5,"Best")
+            #print('GFF: Memory usage: %s (kb)' % resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+            utrmekdeplot(dfbsl,"score",3,"score","score",fig_dir,"5utr-score",5)
+            utrmekdeplot(dfbsl,"sites",3,"sites","sites",fig_dir,"5utr-sites",5)
+            utrmekdeplot(dfbsl,"utr_len",3,"nucleotide","length",fig_dir,"5utr-length",5)
+            utrmejointplot(dfbsl,3,fig_dir,"5utr-score_vs_ocurrence",5)
+            #print('Graphics: Memory usage: %s (kb)' % resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+            end_time = time.time()
+            fiveInfo = "The analysis of the 5' UTRs has a execution time of: " + timer(start_time_program,end_time) + "."
+            logger.info(fiveInfo)    
+            print("> The analysis of the 5' UTRs, is finished!\n")
+    else:
+        booleansl = False
+        print("> The analysis of the 5' UTRs, was not selected!\n")
+    if not conf.polya:
+        print("> Starting with 3'UTRs...\n")
+        time.sleep(2)
+        fastq,report = detect_secondary_regions(tra,trb,conf.overlap, conf.error_probability,conf.threads,logger,dir,conf.Species,conf.slseq,3,conf.experiment)
+        bamfile = filter_sort_index(conf.Genome,fastq,dir,conf.Basename,conf.threads,3,logger)
+        mssg = "> Scoring 3'UTRs..."
+        logger.info(mssg)
+        df = final_score(conf.Genome,report,closest,bamfile,conf.identificator,3,conf.error_probability,conf.multimapping) 
+        booleanpa,dfa,dfbpa = Generate_Indivuals_Reprots(df,conf.fiveutrlen,conf.threeutrlen,conf.excel,report_dir,conf.Basename,conf.score,conf.orf,conf.nbases,3) #Both best score, and all sites.
+        del(df)
+        mssg = "> Reporting 3'UTRs..."
+        logger.info(mssg)
+        if not booleanpa:
+            print("> Can not find 3' UTRs!\n")
+        else:
+            GenerateFasta(dfa,conf.Basename,fasta_dir,conf.Genome,3,"All")
+            GenerateFasta(dfbpa,conf.Basename,fasta_dir,conf.Genome,3,"Best")
+            GenerateGFF(conf.Annotation,dfa,annot_dir,conf.Basename,conf.excel,conf.feature,conf.identificator,logger,3,"All")
+            del(dfa)
+            GenerateGFF(conf.Annotation,dfbpa,annot_dir,conf.Basename,conf.excel,conf.feature,conf.identificator,logger,3,"Best")
+            utrmekdeplot(dfbpa,"score",3,"score","score",fig_dir,"3utr-score",3)
+            utrmekdeplot(dfbpa,"utr_len",3,"nucleotide","length",fig_dir,"3utr-length",3)
+            utrmekdeplot(dfbpa,"sites",3,"sites","sites",fig_dir,"3utr-sites",3)
+            utrmejointplot(dfbpa,3,fig_dir,"3utr-score_vs_ocurrence",3)
+            end_time = time.time()
+            threeInfo = "> The analysis of the 3' UTRs has a execution time of: " + timer(start_time_program,end_time) + "."
+            logger.info(threeInfo) 
+            print("> The analysis of the 3' UTRs, is finished!\n")
+    else:
+        booleanpa = False
+        print("> The analysis of the 3' UTRs, was not selected!\n")
+    if booleanpa and booleansl:
+        vsplot(dfbsl,dfbpa,"score","Score","score",3,fig_dir,"vsplot-score")
+        vsplot(dfbsl,dfbpa,"utr_len","UTR Length","length",3,fig_dir,"vsplot-length")
+        vsplot(dfbsl,dfbpa,"sites","Gene sites","sites",3,fig_dir,"vsplot-sites")
+        del(dfbsl)
+        del(dfbpa)    
+    #Finishing    
+    os.remove(closest)
+    if conf.rmtemp:
+        if "temp" in dir:
+            remove_folder(dir)
+    end_time_program = time.time()
+    exitProgram= "> The whole program has a execution time of: " + timer(start_time_program,end_time_program) + ".\n"
+    logger.info(exitProgram)
+    print(exitProgram)
+    print('Program: Memory usage: %s (kb)' % resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+    print("> Thanks you so much for using UTRme....Good Bye!")
