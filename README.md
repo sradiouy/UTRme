@@ -29,7 +29,11 @@ transcriptomic data.*
 
  1. bash Miniconda3-latest-Linux-x86_64.sh
 
-**Once conda/miniconda is installed, you must install utrme:**
+**Once conda/miniconda is installed, you must create an enviroment and install utrme:**
+
+ 1. conda create -n utrme python==3.6
+ 
+ 1. source activate utrme (remember to use this every time you want to run utrme)
 
  1. conda config --add channels defaults
 
