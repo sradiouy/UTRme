@@ -164,7 +164,7 @@ UTRme needs a reference genome (sequence and annotation) (which can be obtained 
     * no filter
 
 * Adapter
-  * *Adapter sequences to filter out. If none leave empty.*
+  * *Adapter sequences to filter out. If none put NO.*
     * AGATCGGAAGAGC **default:  Illumina standard adapters**
     
 * Multimapping
