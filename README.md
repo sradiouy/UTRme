@@ -23,6 +23,8 @@ transcriptomic data.*
 
 ## How to install UTRme?
 
+##### - At this moment UTRm is not working under Ubuntu 18, we are updating it (Working on Ubuntu 16) -
+
 **If you do not have [conda/miniconda](https://conda.io/miniconda.html) installed, you must first install it:**
 
  1. wget [https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh](https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh)
