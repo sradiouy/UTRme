@@ -1,3 +1,6 @@
+### Now published in Frontiers in Genetics doi: 10.3389/fgene.2018.00671
+
+
 # UTRme: a scoring-based tool to annotate untranslated regions in trypanosomatid genomes
 
 **Motivation**:
