@@ -210,8 +210,8 @@ Next, we will describe the parameters used by the program showing the graphical 
   
 * Remove temporary directory
   * *Remove the container folder from temporary files created during the execution of UTRme.*
-    * *YES*        
-    * *NO*  **default**
+    * *YES*  **default**
+    * *NO*
 
 ## How to run the configuration of UTRme?
 
