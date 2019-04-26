@@ -210,51 +210,26 @@ Next, we will describe the parameters used by the program showing the graphical 
   
 * Remove temporary directory
   * *Remove the container folder from temporary files created during the execution of UTRme.*
-        * *YES*
-        * *NO*  **default**
+        * *YES*  **default**
+        * *NO*
 
 ## How to run the configuration of UTRme?
 
-**python utrme_configuration.py**
+1. python utrme_configuration.py
 
-*And then enter in a web borwser and to this direction http://127.0.0.1:8050/ .Create the configuration file and exit*
+And then enter in a web borwser and to this direction http://127.0.0.1:8050/ .Create the configuration file and exit.
 
-*Or create the configuration file without using the GUI. There is no difference. Please check the example file (Configuration_Files/Example_configuration_file.txt) to know how to create it!*
+Otherwise, you can create the configuration file without using the GUI (useful for working in clusters). There is no difference. 
 
-"""
-temporary_value:YES
+**Please check the example file (Configuration_Files/Example_configuration_file.txt) to know how to create it!**
 
-excel_value:NO
+## How to run UTRme?
 
-N_value:NO
+Inside the UTRme folder:
 
-score_value:NO
+1. python utrme.py Configuration_Files/basename_configuration_file.txt
 
-utr3_value:YES
-
-utr5_value:YES
-
-mmap_value:YES
-
-core_value:4
-
-adapter_value:AGATCGGAAGAGC
-
-id_value:ID=
-orf_value:200
-len3_value:3000
-len5_value:1000
-error_value:0.05
-overlap_value:5
-feature_value:CDS
-basename_value:UTRme-Run
-sl_value:
-organism_value:T. cruzi
-experiment_value:Paired-end
-annotation_value:/home/Maria/Reference/annotation.gff
-genome_value:/home/Maria/Reference/genome.fasta
-second_value:/home/Maria/Experiment/FASTQ2
-first_value:/home/Maria/Experiment/FASTQ1"""
+*You must change basename in basename_configuration_file.txt, for whatever name you have put in the Basename field in the configuration file*
 
 ## How to contact us?
 
