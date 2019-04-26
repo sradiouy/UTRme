@@ -1,3 +1,0 @@
-[console_scripts]
-utrme = UTRme.__main__:main
-

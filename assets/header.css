@@ -1,0 +1,162 @@
+html,body
+{
+    width: 99%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    overflow-x: hidden; 
+}
+
+.logo{
+    height: 100px;
+    right: 0px;
+    padding-left: 10px;
+    padding-top: 6px;
+    padding-bottom: 5px;
+}
+
+.menudropdown{
+    margin-right: 10px;
+    margin-top: 10px;
+}
+
+.about_text{
+    font-size: 17px;
+    font-family: monospace;
+    margin-left: 0;
+    width: 100%;
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
+.about_header{
+    width: 100%;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.entry_tabs{
+    display: block;
+    font-size: large;
+    padding-right: 0px;
+    margin-top: -22px;
+    padding-top: 0px;
+    width: 100%;
+    height: 42px;
+}
+
+
+.gene_table{
+    padding-top: 25px;
+    padding-left: 24px;
+    padding-right: 24px;
+}
+
+.gene_individual_table{
+    margin-top: 0px;
+    font-size: 14px;
+    margin-bottom: 300px;
+}
+
+.h6_gene_individual_table{
+    background-color: rgb(21, 45, 66);
+    height: 22px
+}
+
+.radio_btn_option{
+    display:inline-grid;
+}
+
+#term-dropdown-container{
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0% 25% 5% 25%;
+}
+
+#list-genes-container{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+
+#term-dropdown{
+    width: 67%;
+}
+
+#union-intersection-dropdown{
+    flex: 1;
+    padding-left: 15px;
+}
+
+#cluster-size-distribution{
+    width:70%;
+    margin-left:auto;
+    margin-right:auto;
+    margin-top:20px;
+    margin-bottom: 2px;
+}
+
+
+#taxa-distribution{
+    width:70%;
+    margin-left:auto;
+    margin-right:auto;
+    margin-top:20px;
+    margin-bottom: 20px;
+}
+
+
+#genus-distribution{
+    width:70%;
+    margin-left:auto;
+    margin-right:auto;
+    margin-top:20px;
+    margin-bottom: 20px;
+}
+
+
+#annotation-distribution{
+    width:70%;
+    margin-left:auto;
+    margin-right:auto;
+    margin-top:20px;
+    margin-bottom: 20px;
+}
+
+
+.graph_text{
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+    text-align: justify;
+    font-size: medium;
+    font-family: monospace;
+    /* border: 20px; */
+    /* border-width: thick; */
+    /* border-color: black; */
+}
+
+
+
+._dash-loading-callback {
+    margin: auto;
+    border: 16px solid black;
+    border-radius: 50%;
+    border-top: 16px solid darkred;
+    width: 120px;
+    height: 200px;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
+  }
+  
+  /* Safari */
+  @-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }

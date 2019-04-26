@@ -1,0 +1,2 @@
+conda env create -f utrme.yml
+source activate utrmev2
