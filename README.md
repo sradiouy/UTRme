@@ -48,16 +48,15 @@ transcriptomic data.*
 
 1. source activate UTRme
 
-**Then you must make executable the configuration and UTRme scripts.**
 
-1. chmod +x utrme.py
+## How to configure UTRme?
 
-1. chmod +x utrme_configuration.py
+The only external files that UTRme need are, a reference genome (sequence and annotation files, which can be obtained from http://tritrypdb.org/) and raw reads from a RNA-seq experiment. UTRme can use RNA-seq data either sinlge-end or paired-end. 
 
+Also, UTRme requires a configuration file to be executed, in which all the necessary parameters for its execution are established. There are two ways to create the configuration file: through a graphical interface or simply by creating a text file. 
 
-## How to configure UTRme run?
+Next, we will describe the parameters used by the program showing the graphical interface. The interface can be viewed in any browser.
 
-UTRme needs a reference genome (sequence and annotation) (which can be obtained from http://tritrypdb.org/) and raw reads from a RNA-seq experiment. UTRme can use RNA-seq data either sinlge-end or paired-end. 
 
 ### Required arguments:
 
@@ -107,18 +106,16 @@ UTRme needs a reference genome (sequence and annotation) (which can be obtained 
 
 ### Optional arguments:
 
-![UTRME2](https://github.com/sradiouy/UTRme/blob/master/utrme2.png)
+![UTRME2](https://raw.githubusercontent.com/sradiouy/UTRme/master/Images/utrme_Optional.png)
 
-* ID Attribute
-  * *GFF attribute to be used as feature ID. i.e. ID=TcCLB.506779.120*
-    * *ID=*
-
-* Feature Type
+* Feature type
   * *Feature type (3rd column in GFF/GFF3 file) to be used, all features of other type are ignored*
   * *For example:*
      * CDS
      * gene
      * mRNA
+     * Polypeptide
+
 
 * Min. overlap length
   * *Cutadapt option: shorter secondary regions are ignored.*
@@ -130,14 +127,16 @@ UTRme needs a reference genome (sequence and annotation) (which can be obtained 
     * 8 
     * 9 
     * 10
-  
-* Max. error rate
+
+* Error probability
   * *Cutadapt option: All searches for secondary regions are error tolerant*
     * 0.05
     * 0.03
     * 0.02
     * 0.01      **default**
     * 0.005
+
+
 
 * 5'UTR length
   * *Maximum length of the  5 'UTR region.*
@@ -159,6 +158,7 @@ UTRme needs a reference genome (sequence and annotation) (which can be obtained 
     * 10000
     * no filter  
 
+
 * Max. ORF length (aa) in UTR
   * *Do not report UTR with ORFs longer than this value.*
     * 30
@@ -169,35 +169,92 @@ UTRme needs a reference genome (sequence and annotation) (which can be obtained 
     * 400
     * no filter
 
-* Adapter
-  * *Adapter sequences to filter out. If none put NO.*
-    * AGATCGGAAGAGC **default:  Illumina standard adapters**
-    
-* Multimapping
-  * *Remove multimapping reads.*
 
-* Cores
+* ID Attribute
+  * *GFF attribute to be used as feature ID. i.e. ID=TcCLB.506779.120*
+    * *ID=*
+
+
+* Adapter
+  * *Adapter sequences to filter out. If none leave empty.*
+    * AGATCGGAAGAGC **default:  Illumina standard adapters**
+
+* Threads
   * *Number of parallel search cores.*
 
-* Remove temporary directory
-  * *Remove the container folder from temporary files created during the execution of UTRme.*
 
-* 5'UTR
-  * *Performe 5'UTR detection.*
+* MultiMapping
+  * *YES*  **default**
+  * *NO*
 
-* 3'UTR
-  * *Performe 3'UTR detection.*
+* Perform analysis in 3'UTR
+  * *YES*  **default**
+  * *NO*
+
+* Perform analysis in 5'UTR
+  * *YES*  **default**
+  * *NO*
 
 * Report UTR's with negative score
+  * *YES*
+  * *NO*  **default**
 
 * Report UTR's with N's
+  * *YES*
+  * *NO*  **default**
 
 * Excel
   * *Report results as excel files instead of tabular ones.*
+        * *YES*
+        * *NO*  **default**
   
-## How to run UTRme?
+* Remove temporary directory
+  * *Remove the container folder from temporary files created during the execution of UTRme.*
+        * *YES*
+        * *NO*  **default**
 
-**You only need to click on the start button!**
+## How to run the configuration of UTRme?
+
+**python utrme_configuration.py**
+
+*And then enter in a web borwser and to this direction http://127.0.0.1:8050/ .Create the configuration file and exit*
+
+*Or create the configuration file without using the GUI. There is no difference. Please check the example file (Configuration_Files/Example_configuration_file.txt) to know how to create it!*
+
+"""
+temporary_value:YES
+
+excel_value:NO
+
+N_value:NO
+
+score_value:NO
+
+utr3_value:YES
+
+utr5_value:YES
+
+mmap_value:YES
+
+core_value:4
+
+adapter_value:AGATCGGAAGAGC
+
+id_value:ID=
+orf_value:200
+len3_value:3000
+len5_value:1000
+error_value:0.05
+overlap_value:5
+feature_value:CDS
+basename_value:UTRme-Run
+sl_value:
+organism_value:T. cruzi
+experiment_value:Paired-end
+annotation_value:/home/Maria/Reference/annotation.gff
+genome_value:/home/Maria/Reference/genome.fasta
+second_value:/home/Maria/Experiment/FASTQ2
+first_value:/home/Maria/Experiment/FASTQ1"""
 
 ## How to contact us?
 

@@ -18,7 +18,7 @@ basename_value:UTRme-Run
 sl_value:
 organism_value:T. cruzi
 experiment_value:Paired-end
-annotation_value:/home/Maria/Annotation/annotation.gff
-genome_value:/home/Maria/Genome/genome.fasta
+annotation_value:/home/Maria/Reference/annotation.gff
+genome_value:/home/Maria/Reference/genome.fasta
 second_value:/home/Maria/Experiment/FASTQ2/
 first_value:/home/Maria/Experiment/FASTQ1/
