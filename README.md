@@ -205,13 +205,13 @@ Next, we will describe the parameters used by the program showing the graphical 
 
 * Excel
   * *Report results as excel files instead of tabular ones.*
-        * *YES*
-        * *NO*  **default**
+    * *YES*        
+    * *NO*  **default**
   
 * Remove temporary directory
   * *Remove the container folder from temporary files created during the execution of UTRme.*
-        * *YES*  **default**
-        * *NO*
+    * *YES*        
+    * *NO*  **default**
 
 ## How to run the configuration of UTRme?
 
@@ -229,7 +229,7 @@ Inside the UTRme folder:
 
 1. python utrme.py Configuration_Files/basename_configuration_file.txt
 
-*You must change basename in basename_configuration_file.txt, for whatever name you have put in the Basename field in the configuration file*
+*You must change **basename in basename_configuration_file.txt**, for whatever name you have put in the Basename field in the configuration file*
 
 ## How to contact us?
 
