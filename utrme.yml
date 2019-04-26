@@ -84,8 +84,3 @@ dependencies:
     - werkzeug==0.15.2
     - xlsxwriter==1.0.5
     - pyfaidx==0.5.5.2
-
-
-
-/media/Disco2/santir/Maestria/Definicion-UTRs/Genome/TriTrypDB-29_TcruziCLBrenerEsmeraldo-like_Genome.fasta
-/media/Disco2/santir/Maestria/Definicion-UTRs/Genome/TriTrypDB-29_TcruziCLBrenerEsmeraldo-like_Genome.gff

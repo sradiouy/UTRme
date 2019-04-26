@@ -7,7 +7,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output, State
 
 
-logo = "https://raw.githubusercontent.com/sradiouy/UTRme/master/Logo2.png"
+logo = "https://raw.githubusercontent.com/sradiouy/UTRme/master/Images/Logo2.png"
 
 
 
