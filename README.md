@@ -26,65 +26,69 @@ transcriptomic data.*
 
 ## How to install UTRme?
 
-##### - At this moment UTRme is not working under Ubuntu 18, we are updating it (Working on Ubuntu 16) -
+**The first step to install UTRme is to download the UTRme folder of this site. You can use the git command (if you have it installed) or download the zipped folder and unzip it.**
 
-**If you do not have [conda/miniconda](https://conda.io/miniconda.html) installed, you must first install it:**
+1. git clone https://github.com/sradiouy/UTRme.git 
+
+**or**
+
+1. unzip UTRme-master.zip
+
+**Then, if you do not have [conda/miniconda](https://conda.io/miniconda.html) installed, you must first install it. Otherwise skip this step.**
 
  1. wget [https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh](https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh)
 
  1. bash Miniconda3-latest-Linux-x86_64.sh
 
-**Once conda/miniconda is installed, you must create an enviroment and install utrme:**
+**Once conda/miniconda is installed, you must create an enviroment and install UTRme. Preferably in the UTRme folder. The file utrme.yml is inside the UTRme folder. So you must enter to it (cd command).**
 
- 1. conda create -n utrme python==3.6
- 
- 1. source activate utrme (remember to use this every time you want to run utrme)
+ 1. conda env create -f utrme.yml
 
- 1. conda config --add channels defaults
+**Then you must activate the previously generated environment. Rembeber to activate it every time you want to use UTRme**
 
- 1. conda config --add channels conda-forge
+1. source activate UTRme
 
- 1. conda config --add channels bioconda
+**Then you must make executable the configuration and UTRme scripts.**
 
- 1. conda install -c sradiouy utrme
+1. chmod +x utrme.py
 
-**If you previously have a conda/miniconda installed:**
+1. chmod +x utrme_configuration.py
 
-1. conda install -c sradiouy utrme
 
-**If the previous step does not work, you must first configure the conda channels, and then install utrme, as in the instructions above.**
-
-## How to configure UTRme?
+## How to configure UTRme run?
 
 UTRme needs a reference genome (sequence and annotation) (which can be obtained from http://tritrypdb.org/) and raw reads from a RNA-seq experiment. UTRme can use RNA-seq data either sinlge-end or paired-end. 
 
 ### Required arguments:
 
-![UTRME1](https://github.com/sradiouy/UTRme/blob/master/utrme1.png)
+![UTRME1](https://raw.githubusercontent.com/sradiouy/UTRme/master/Images/utrme_Required.png)
 
-* FASTQ files location (1)
+* First pair folder (1)
   * *Folder where the fastq files (gzipped or not) are located.*
     * *Pair 1 or single-end files.*
 
 
 
-* FASTQ files location (2)
+* Second pair folder (2)
   * *Folder where the fastq files (gzipped or not) are located.*
-    * *Pair 2 or same folder as FASTQ files location (1) if the experiment is single-end.*
+    * *Pair 2 or leave empty if the experiment is single-end.*
   
 
 
 
-* Genome
+* Full path to genome file
   * *Reference genome in fasta format.* 
     * *Can be obtained from  [tritrypdb!](http://tritrypdb.org/)*
    
 
 
-* Annotation
+* Full path to annotation file
   * *Annotation of the genome in gff/gff3 format.*
     * *Can be obtained from  [tritrypdb!](http://tritrypdb.org/)*
   
+* Type of experiment
+  * *Paired-end*
+  * *Single-end*
 
 * Organism
   * *Define the spliced-ledear sequence used in the program.*
@@ -93,11 +97,8 @@ UTRme needs a reference genome (sequence and annotation) (which can be obtained 
     * *L. major*
     * *Other*
   
-* Type of experiment
-  * *Single-end*
-  * *Paired*
   
-* Splice-Leader seq
+* Spliced-leader sequence
   * *SL sequence of interest. Remember to put "Other" in Organism*
 
 * Basename

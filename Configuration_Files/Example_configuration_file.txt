@@ -20,5 +20,5 @@ organism_value:T. cruzi
 experiment_value:Paired-end
 annotation_value:/home/Maria/Annotation/annotation.gff
 genome_value:/home/Maria/Genome/genome.fasta
-second_value:/home/Maria/Experiment/SecondPair/
-first_value:/home/Maria/Experiment/FirstPair/
+second_value:/home/Maria/Experiment/FASTQ2/
+first_value:/home/Maria/Experiment/FASTQ1/

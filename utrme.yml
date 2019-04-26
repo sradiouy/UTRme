@@ -1,4 +1,4 @@
-name: utrmev2
+name: UTRme
 channels:
   - anaconda
   - bioconda
@@ -21,7 +21,7 @@ dependencies:
   - tbb=2019.4=hfd86e86_0
   - bedtools=2.25.0=he860b03_5
   - bowtie2=2.3.4.3=py36he860b03_1
-  - cutadapt=2.3=py36_2
+  - cutadapt=2.3=py36h14c3975_0
   - samtools=1.7=1
   - xopen=0.5.1=py_0
   - libffi=3.2.1=he1b5a44_1006
