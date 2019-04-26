@@ -229,7 +229,7 @@ Inside the UTRme folder:
 
 1. python utrme.py Configuration_Files/basename_configuration_file.txt
 
-*You must change **basename in basename_configuration_file.txt**, for whatever name you have put in the Basename field in the configuration file*
+*You must change basename in **basename_configuration_file.txt**, for whatever name you have put in the Basename field in the configuration file*
 
 ## How to contact us?
 
