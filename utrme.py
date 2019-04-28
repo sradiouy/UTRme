@@ -222,7 +222,7 @@ def splice_leader(species,slseq):
     return sl[species]
 
 def check_file_exist(file_path,type_file):
-    line = "The " + file_path + " does not exist. Check the configuration file"
+    line = "The " + file_path + " (" + type_file + ") does not exist. Check the configuration file"
     return os.path.exists(file_path),line
 
 def check_YES_NO(value):
