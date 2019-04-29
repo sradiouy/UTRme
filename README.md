@@ -28,6 +28,8 @@ transcriptomic data.*
 
 **The first step to install UTRme is to download the UTRme folder of this site. You can use the git command (if you have it installed) or download the zipped folder and unzip it.**
 
+1. sudo apt-get install git 
+
 1. git clone https://github.com/sradiouy/UTRme.git 
 
 **or**
