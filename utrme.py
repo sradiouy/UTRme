@@ -532,7 +532,7 @@ def filter_sort_index(genome,fastq,dirout,basename,threads,side,logger):
     os.remove(samfile)
     sortedbam = basename + "_sort" + ".bam"
     out = os.path.join(dirout,"UTRmeSort")
-    commandLine = "samtools sort -O bam -T "+ out + " -o  " + sortedbam + " " + bamfile
+    commandLine = "samtools sort -O bam -@ " + str(threads)+ " -T "+ out + " -o  " + sortedbam + " " + bamfile
     runcml(commandLine,"samtools sort","samtools sort error",logger,False)
     commandLine = "samtools index -@ " + str(threads) +" "  + sortedbam
     runcml(commandLine,"samtools index","samtools index error",logger,False)
