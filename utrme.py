@@ -196,7 +196,7 @@ def runcml(cml,program,error,logger,bool):
     stdout, stderr = process.communicate()
     stderr = stderr.decode("utf-8")
     stdout = stdout.decode("utf-8")
-    if stderr != "":
+    if stderr != "" and "merging" not in stderr and "bam_sort_core" not in stderr:
         mssg = error + ":   " + stderr
         print(cml)
         print(mssg)
